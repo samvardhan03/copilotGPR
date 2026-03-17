@@ -1,0 +1,53 @@
+site_name: StatForge
+site_description: Automated Bayesian-frequentist statistics and publication-ready reports.
+site_author: StatForge Authors
+repo_url: https://github.com/samvardhan03/statforge
+repo_name: samvardhan03/statforge
+
+theme:
+  name: material
+  logo: assets/logo.png
+  favicon: assets/favicon.png
+  features:
+    - navigation.tabs
+    - navigation.indexes
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+  palette:
+    - scheme: default
+      primary: slate
+      accent: blue
+    - scheme: slate
+      primary: slate
+      accent: blue
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - admonition
+  - pymdownx.details
+  - pymdownx.magiclink
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+nav:
+  - Home: index.md
+  - Guide:
+      - Getting Started: getting-started.md
+      - CLI Reference: cli.md
+  - Services & Pricing: services.md
+  - Contributing: contributing.md
