@@ -5,10 +5,6 @@ StatForge is built to provide rigorous, automated statistical reporting to both 
 We offer two distinct deployment and analysis levels.
 
 ## 1. Open Source (Free)
-The core CLI provides free, unrestricted access to the frequentist model suite.
-*   **Included:** Full CLI `statforge run` pipeline execution, frequentist models, and APA PDF/DOCX/HTML output formats.
-*   **Narrative Generation:** Local LLM execution via Ollama. 
-## 1. Open Source (Free)
 The core CLI provides free, unrestricted access to the automated statistical pipeline.
 *   **Included:** Full CLI `statforge run` pipeline execution, model registry access, and standardized report generation.
 
