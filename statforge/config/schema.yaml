@@ -1,0 +1,28 @@
+---
+general:
+  random_seed: 42
+  report_style: "apa7"
+  backend: "ollama"
+
+model:
+  default_priority: "bayesian" # or "frequentist"
+  bayesian:
+    prior_sensitivity_variants:
+      - "weakly_informative"
+      - "uninformative"
+      - "informative"
+    sampler: "NUTS"
+    draws: 2000
+    tune: 1000
+  frequentist:
+    alpha: 0.05
+    effect_size_metric: "auto"
+
+assumptions:
+  normality_alpha: 0.05
+  homoscedasticity_alpha: 0.05
+  outlier_method: "iqr"
+
+export:
+  formats: ["pdf", "docx", "html"]
+  include_methods_text: true
