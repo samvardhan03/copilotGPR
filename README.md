@@ -74,6 +74,4 @@ If you use StatForge in your research, please cite our JOSS paper (DOI pending).
 
 ---
 
-## Request Custom Analysis or Deployment
 
-We offer extended professional services including cloud deployments and custom PyMC model implementations: [Request Custom Engagement](https://statforge.example.com)
