@@ -3,249 +3,779 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StatForge | Automated Bayesian Statistics</title>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-    <script>mermaid.initialize({startOnLoad:true});</script>
+    <title>StatForge — Automated Bayesian-Frequentist Statistics</title>
+    <meta name="description" content="Open-source Python library and CLI for automated statistical analysis and publication-ready report generation.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        /* ──────────────────────────────────────────────
+           Design System: Institutional / Academic
+        ────────────────────────────────────────────── */
         :root {
-            --primary: #2b3a42;
-            --accent: #5d9cec;
-            --background: #f4f7f6;
-            --text: #333333;
-            --white: #ffffff;
+            --navy:    #0f172a;
+            --slate-9: #1e293b;
+            --slate-8: #334155;
+            --slate-7: #475569;
+            --slate-6: #64748b;
+            --slate-5: #94a3b8;
+            --slate-4: #cbd5e1;
+            --slate-3: #e2e8f0;
+            --slate-2: #f1f5f9;
+            --slate-1: #f8fafc;
+            --white:   #ffffff;
+            --accent:  #3b82f6;
+            --accent-hover: #2563eb;
+            --green:   #10b981;
+            --amber:   #f59e0b;
+            --rose:    #f43f5e;
+            --font-prose: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-mono:  'Fira Code', 'Consolas', monospace;
         }
+
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+        html { scroll-behavior: smooth; }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            color: var(--text);
-            background-color: var(--background);
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-            scroll-behavior: smooth;
+            font-family: var(--font-prose);
+            color: var(--slate-8);
+            background: var(--white);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
         }
 
-        header {
-            background-color: var(--primary);
-            color: var(--white);
-            padding: 4rem 2rem;
+        /* ── Layout ── */
+        .container { max-width: 1120px; margin: 0 auto; padding: 0 1.5rem; }
+        section { padding: 5rem 0; }
+
+        /* ── Typography ── */
+        h1 { font-size: 2.75rem; font-weight: 700; line-height: 1.15; color: var(--navy); letter-spacing: -0.02em; }
+        h2 { font-size: 2rem; font-weight: 600; color: var(--navy); letter-spacing: -0.015em; margin-bottom: 1rem; }
+        h3 { font-size: 1.125rem; font-weight: 600; color: var(--navy); }
+        p  { color: var(--slate-7); }
+        .section-label {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+        }
+        .section-desc {
+            max-width: 640px;
+            margin: 0 auto 3rem;
+            text-align: center;
+            color: var(--slate-6);
+            font-size: 1.05rem;
+        }
+        .text-center { text-align: center; }
+
+        /* ── Navbar ── */
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--slate-3);
+        }
+        nav .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 3.5rem;
+        }
+        .nav-brand {
+            font-weight: 700; font-size: 1.15rem; color: var(--navy);
+            text-decoration: none; display: flex; align-items: center; gap: 0.5rem;
+        }
+        .nav-brand span {
+            background: var(--accent);
+            color: white;
+            font-size: 0.65rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+        }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--slate-6);
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+        .nav-links a:hover { color: var(--navy); }
+
+        /* ── Buttons ── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-prose);
+            font-size: 0.875rem;
+            font-weight: 600;
+            padding: 0.65rem 1.35rem;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59,130,246,0.25); }
+        .btn-secondary { background: var(--slate-2); color: var(--slate-8); }
+        .btn-secondary:hover { background: var(--slate-3); }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           §1 HERO
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        #hero {
+            padding: 6rem 0 4rem;
+            background: linear-gradient(180deg, var(--slate-1) 0%, var(--white) 100%);
+        }
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        .hero-text h1 { margin-bottom: 1.25rem; }
+        .hero-text .subheadline {
+            font-size: 1.1rem;
+            color: var(--slate-6);
+            margin-bottom: 2rem;
+            max-width: 480px;
+        }
+        .hero-ctas { display: flex; gap: 0.75rem; }
+
+        /* Terminal Mock */
+        .terminal {
+            background: var(--navy);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(15,23,42,0.25);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+        }
+        .terminal-bar {
+            background: var(--slate-9);
+            padding: 0.6rem 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+        .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .terminal-dot.red   { background: #ef4444; }
+        .terminal-dot.yellow{ background: #eab308; }
+        .terminal-dot.green { background: #22c55e; }
+        .terminal-bar span {
+            flex: 1;
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--slate-5);
+            font-family: var(--font-prose);
+        }
+        .terminal-body {
+            padding: 1.25rem;
+            min-height: 240px;
+            color: var(--slate-4);
+            line-height: 1.85;
+        }
+        .terminal-body .prompt { color: var(--green); }
+        .terminal-body .cmd   { color: var(--white); }
+        .terminal-body .dim   { color: var(--slate-6); }
+        .terminal-body .success { color: var(--green); }
+        .terminal-body .accent  { color: var(--accent); }
+        .cursor-blink {
+            display: inline-block;
+            width: 8px;
+            height: 15px;
+            background: var(--slate-4);
+            vertical-align: text-bottom;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* Typing animation */
+        .type-line { opacity: 0; transform: translateY(6px); }
+        .type-line.visible { opacity: 1; transform: translateY(0); transition: all 0.3s ease; }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           §2 PIPELINE
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        #pipeline { background: var(--slate-1); }
+
+        .pipeline-track {
+            display: flex;
+            gap: 0;
+            position: relative;
+            justify-content: center;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+        }
+
+        .pipeline-stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            flex: 0 0 auto;
+            width: 160px;
+            cursor: pointer;
+        }
+
+        .stage-node {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            position: relative;
+            z-index: 2;
+            transition: transform 0.25s, box-shadow 0.25s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+        .pipeline-stage:hover .stage-node {
+            transform: scale(1.12);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        .stage-node.n1 { background: #ede9fe; color: #7c3aed; }
+        .stage-node.n2 { background: #dbeafe; color: #2563eb; }
+        .stage-node.n3 { background: #d1fae5; color: #059669; }
+        .stage-node.n4 { background: #fce7f3; color: #db2777; }
+        .stage-node.n5 { background: #fef3c7; color: #d97706; }
+        .stage-node.n6 { background: #ffe4e6; color: #e11d48; }
+
+        .stage-label {
+            margin-top: 0.75rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--navy);
             text-align: center;
         }
 
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
+        /* Connector lines */
+        .stage-connector {
+            position: absolute;
+            top: 32px;
+            left: calc(50% + 32px);
+            width: calc(100% - 64px);
+            height: 2px;
+            z-index: 1;
+        }
+        .stage-connector::after {
+            content: '';
+            display: block;
+            height: 2px;
+            background: linear-gradient(90deg, var(--slate-4), var(--accent), var(--slate-4));
+            background-size: 200% 100%;
+            animation: flowLine 2s linear infinite;
+        }
+        @keyframes flowLine { 0%{background-position:200% 0} 100%{background-position:0 0} }
+        .pipeline-stage:last-child .stage-connector { display: none; }
+
+        /* Detail panel */
+        .stage-detail {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(8px);
+            width: 280px;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--slate-3);
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s, transform 0.2s;
+            z-index: 10;
+        }
+        .pipeline-stage:hover .stage-detail {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(12px);
+        }
+        .stage-detail h4 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 0.4rem;
+        }
+        .stage-detail p {
+            font-size: 0.78rem;
+            color: var(--slate-6);
+            line-height: 1.55;
+        }
+        .stage-detail code {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            background: var(--slate-2);
+            padding: 0.1rem 0.35rem;
+            border-radius: 3px;
+            color: var(--slate-8);
         }
 
-        h2 {
-            font-weight: 400;
-            color: #d1d9e6;
-            margin-bottom: 2rem;
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           §3 CAPABILITIES
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .cap-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        .cap-card {
+            background: var(--white);
+            border: 1px solid var(--slate-3);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .cap-card:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+            transform: translateY(-2px);
+        }
+        .cap-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            margin-bottom: 1rem;
+        }
+        .cap-icon.i1 { background: #dbeafe; color: #2563eb; }
+        .cap-icon.i2 { background: #ede9fe; color: #7c3aed; }
+        .cap-icon.i3 { background: #d1fae5; color: #059669; }
+        .cap-card h3 { margin-bottom: 0.5rem; }
+        .cap-card p { font-size: 0.9rem; color: var(--slate-6); }
+        .cap-card code {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            background: var(--slate-2);
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            color: var(--slate-8);
         }
 
-        .container {
-            max-width: 1100px;
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           §4 SERVICES
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        #services { background: var(--slate-1); }
+        .svc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            max-width: 800px;
             margin: 0 auto;
-            padding: 2rem;
         }
-
-        section {
-            margin: 4rem 0;
-        }
-
-        .section-title {
+        .svc-card {
+            background: var(--white);
+            border: 1px solid var(--slate-3);
+            border-radius: 12px;
+            padding: 2.5rem 2rem;
             text-align: center;
-            font-size: 2.2rem;
+            position: relative;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .svc-card:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+            transform: translateY(-2px);
+        }
+        .svc-card.featured {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px var(--accent);
+        }
+        .svc-badge {
+            position: absolute;
+            top: -0.75rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+        .svc-tier {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 0.35rem;
+        }
+        .svc-price {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 1.25rem;
+        }
+        .svc-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+        .svc-features li {
+            font-size: 0.87rem;
+            color: var(--slate-7);
+            padding: 0.4rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        .svc-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           §5 FOOTER
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        footer {
+            background: var(--navy);
+            color: var(--slate-5);
+            padding: 4rem 0 2rem;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 3rem;
             margin-bottom: 3rem;
-            color: var(--primary);
         }
-
-        /* Mermaid Graph Container */
-        .architecture-diagram {
-            background-color: var(--white);
-            padding: 2rem;
+        .footer-brand { font-size: 1.1rem; font-weight: 700; color: var(--white); margin-bottom: 0.75rem; }
+        .footer-brand-desc { font-size: 0.85rem; color: var(--slate-5); max-width: 320px; }
+        footer h4 { color: var(--slate-4); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 1rem; }
+        footer ul { list-style: none; }
+        footer ul li { margin-bottom: 0.5rem; }
+        footer ul a { color: var(--slate-5); font-size: 0.85rem; text-decoration: none; transition: color 0.15s; }
+        footer ul a:hover { color: var(--white); }
+        .footer-bar {
+            border-top: 1px solid var(--slate-8);
+            padding-top: 1.5rem;
+            font-size: 0.78rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .cite-block {
+            background: var(--slate-9);
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 2rem;
-            text-align: center;
+            padding: 1rem 1.25rem;
+            margin-top: 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--slate-5);
+            line-height: 1.6;
             overflow-x: auto;
         }
 
-        /* Pricing Cards */
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .pricing-card {
-            background-color: var(--white);
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 2rem;
-            text-align: center;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .pricing-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.08); /* Highlight on hover */
-        }
-
-        .pricing-card.featured {
-            border: 2px solid var(--accent);
-            box-shadow: 0 8px 15px rgba(93, 156, 236, 0.2);
-            position: relative;
-        }
-
-        .featured-badge {
-            background-color: var(--accent);
-            color: white;
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 0.2rem 1rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        .pricing-tier {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .pricing-price {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--accent);
-            margin-bottom: 1.5rem;
-        }
-
-        .pricing-features {
-            list-style: none;
-            padding: 0;
-            margin-bottom: 2rem;
-            text-align: left;
-            flex-grow: 1;
-        }
-
-        .pricing-features li {
-            margin-bottom: 0.8rem;
-            position: relative;
-            padding-left: 1.5rem;
-        }
-
-        .pricing-features li::before {
-            content: "✓";
-            color: var(--accent);
-            position: absolute;
-            left: 0;
-            font-weight: bold;
-        }
-
-        .cta-button {
-            display: inline-block;
-            background-color: var(--primary);
-            color: var(--white);
-            padding: 0.8rem 1.5rem;
-            text-decoration: none;
-            border-radius: 4px;
-            font-weight: 600;
-            transition: background-color 0.2s;
-            margin-top: auto; /* Push to bottom */
-        }
-
-        .cta-button:hover {
-            background-color: #1a242a;
-        }
-
-        .cta-button.primary {
-            background-color: var(--accent);
-        }
-
-        .cta-button.primary:hover {
-            background-color: #4a89dc;
-        }
-
-        footer {
-            background-color: var(--primary);
-            color: #d1d9e6;
-            text-align: center;
-            padding: 2rem;
-            margin-top: 4rem;
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .hero-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+            .pipeline-track { flex-direction: column; align-items: center; }
+            .stage-connector { display: none !important; }
+            .pipeline-stage { width: 100%; max-width: 280px; }
+            .stage-detail { position: static; transform: none; width: 100%; margin-top: 0.75rem; opacity: 1; pointer-events: auto; }
+            .cap-grid { grid-template-columns: 1fr; }
+            .svc-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
         }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>StatForge</h1>
-    <h2>Automated Bayesian-frequentist statistics and publication-ready reports.</h2>
-    <a href="#pricing" class="cta-button primary">View Pricing</a>
-    <a href="https://github.com/samvardhan03/statforge" class="cta-button">View on GitHub</a>
-</header>
+<!-- ── Navbar ── -->
+<nav>
+    <div class="container">
+        <a href="#" class="nav-brand">StatForge <span>v0.1.0</span></a>
+        <ul class="nav-links">
+            <li><a href="#pipeline">Pipeline</a></li>
+            <li><a href="#capabilities">Capabilities</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="https://samvardhan03.github.io/statforge/" target="_blank">Documentation</a></li>
+            <li><a href="https://github.com/samvardhan03/statforge" target="_blank">GitHub</a></li>
+        </ul>
+    </div>
+</nav>
 
-<div class="container">
-
-    <section id="architecture">
-        <h2 class="section-title">The Execution Pipeline</h2>
-        <div class="architecture-diagram">
-            <div class="mermaid">
-                graph TD
-                    A[DataLoader <br> CSV, Excel, SPSS, Parquet] --> B[AssumptionChecker <br> Validates distribution constraints]
-                    B --> C[MethodSelector <br> Selects appropriate statistical test]
-                    C --> D[ModelFitter <br> Invokes PyMC or Frequentist Models]
-                    D --> E[ResultFormatter <br> Structures tables and effect sizes]
-                    E --> F[ReportBuilder <br> Renders Jinja2 PDF/DOCX templates]
+<!-- ━━━━━━━━━━ §1 HERO ━━━━━━━━━━ -->
+<section id="hero">
+    <div class="container">
+        <div class="hero-grid">
+            <div class="hero-text">
+                <h1>Automated Bayesian-frequentist statistics and publication-ready reports</h1>
+                <p class="subheadline">From raw data to APA-formatted PDF, DOCX, and HTML without deep programming expertise.</p>
+                <div class="hero-ctas">
+                    <a href="https://samvardhan03.github.io/statforge/" class="btn btn-primary">Read the Docs</a>
+                    <a href="#services" class="btn btn-secondary">View Professional Services</a>
+                </div>
+            </div>
+            <div class="terminal" role="img" aria-label="Terminal demo of StatForge CLI">
+                <div class="terminal-bar">
+                    <div class="terminal-dot red"></div>
+                    <div class="terminal-dot yellow"></div>
+                    <div class="terminal-dot green"></div>
+                    <span>Terminal</span>
+                </div>
+                <div class="terminal-body" id="termBody">
+                    <div class="type-line" data-delay="300">
+                        <span class="prompt">$ </span><span class="cmd">pip install statforge</span>
+                    </div>
+                    <div class="type-line" data-delay="900">
+                        <span class="dim">Collecting statforge...</span>
+                    </div>
+                    <div class="type-line" data-delay="1500">
+                        <span class="success">✔ Successfully installed statforge-0.1.0</span>
+                    </div>
+                    <div class="type-line" data-delay="2400">&nbsp;</div>
+                    <div class="type-line" data-delay="2700">
+                        <span class="prompt">$ </span><span class="cmd">statforge run experiment_data.csv</span>
+                    </div>
+                    <div class="type-line" data-delay="3300">
+                        <span class="dim">▸ DataLoader        </span><span class="success">done</span>
+                    </div>
+                    <div class="type-line" data-delay="3600">
+                        <span class="dim">▸ AssumptionChecker  </span><span class="success">done</span>
+                    </div>
+                    <div class="type-line" data-delay="3900">
+                        <span class="dim">▸ MethodSelector     </span><span class="success">done</span>
+                    </div>
+                    <div class="type-line" data-delay="4200">
+                        <span class="dim">▸ ModelFitter        </span><span class="success">done</span>
+                    </div>
+                    <div class="type-line" data-delay="4500">
+                        <span class="dim">▸ ResultFormatter    </span><span class="success">done</span>
+                    </div>
+                    <div class="type-line" data-delay="4800">
+                        <span class="dim">▸ ReportBuilder      </span><span class="success">done</span>
+                    </div>
+                    <div class="type-line" data-delay="5400">&nbsp;</div>
+                    <div class="type-line" data-delay="5700">
+                        <span class="success">✔</span> <span class="accent">report.pdf</span> <span class="dim">generated (APA7 format)</span>
+                    </div>
+                    <div class="type-line" data-delay="6200"><span class="cursor-blink"></span></div>
+                </div>
             </div>
         </div>
-        <p style="text-align: center;">StatForge implements a robust six-stage asynchronous execution pipeline, optimizing computational loads using `asyncio.to_thread` while maintaining a structured caching layer logic (`joblib.Memory`) for efficient iterative testing.</p>
-    </section>
+    </div>
+</section>
 
-    <section id="pricing">
-        <h2 class="section-title">Deployment & Analysis Services</h2>
-        
-        <div class="pricing-grid">
-            <!-- Open Source Tier -->
-            <div class="pricing-card">
-                <div class="pricing-tier">Open Source</div>
-                <div class="pricing-price">Free</div>
-                <ul class="pricing-features">
-                    <li>Full CLI Access</li>
-                    <li>Frequentist & Bayesian Model Suite</li>
-                    <li>APA/Standardized Report Generation</li>
-                    <li>Community Support</li>
-                </ul>
-                <a href="https://github.com/samvardhan03/statforge" class="cta-button">Install via pip</a>
+<!-- ━━━━━━━━━━ §2 PIPELINE ━━━━━━━━━━ -->
+<section id="pipeline">
+    <div class="container">
+        <div class="text-center">
+            <span class="section-label">Architecture</span>
+            <h2>The Six-Stage Asynchronous Pipeline</h2>
+        </div>
+        <p class="section-desc">Each stage executes via <code style="font-family:var(--font-mono);font-size:0.85rem;background:var(--slate-2);padding:0.15rem 0.4rem;border-radius:3px;">asyncio.to_thread</code>, streaming real-time progress events to the CLI while offloading CPU-bound computation to separate threads.</p>
+
+        <div class="pipeline-track">
+            <!-- Stage 1 -->
+            <div class="pipeline-stage">
+                <div class="stage-node n1">📂</div>
+                <div class="stage-connector"></div>
+                <div class="stage-label">DataLoader</div>
+                <div class="stage-detail">
+                    <h4>DataLoader</h4>
+                    <p>CSV, Excel (<code>.xlsx</code>), SPSS (<code>.sav</code>), and Parquet ingestion via <code>pandas</code> + <code>pyreadstat</code>. Automatic format detection by file extension.</p>
+                </div>
             </div>
+            <!-- Stage 2 -->
+            <div class="pipeline-stage">
+                <div class="stage-node n2">🔬</div>
+                <div class="stage-connector"></div>
+                <div class="stage-label">AssumptionChecker</div>
+                <div class="stage-detail">
+                    <h4>AssumptionChecker</h4>
+                    <p>Shapiro-Wilk normality and Levene homoscedasticity tests with borderline detection (0.04 &lt; p &lt; 0.06). Results cached via <code>joblib.Memory</code> keyed on SHA-256 data hashes.</p>
+                </div>
+            </div>
+            <!-- Stage 3 -->
+            <div class="pipeline-stage">
+                <div class="stage-node n3">🧭</div>
+                <div class="stage-connector"></div>
+                <div class="stage-label">MethodSelector</div>
+                <div class="stage-detail">
+                    <h4>MethodSelector</h4>
+                    <p>Decision-tree mapping group count + assumption results to a ranked test list. Routes to <code>t_test</code>, <code>mann_whitney</code>, <code>anova</code>, <code>kruskal_wallis</code>, or <code>regression</code>.</p>
+                </div>
+            </div>
+            <!-- Stage 4 -->
+            <div class="pipeline-stage">
+                <div class="stage-node n4">⚙️</div>
+                <div class="stage-connector"></div>
+                <div class="stage-label">ModelFitter</div>
+                <div class="stage-detail">
+                    <h4>ModelFitter</h4>
+                    <p>Plugin registry dispatching to registered models via the <code>@register</code> decorator. Ships with frequentist (ANOVA, T-Test) and Bayesian (PyMC T-Test, ANOVA, Regression) models.</p>
+                </div>
+            </div>
+            <!-- Stage 5 -->
+            <div class="pipeline-stage">
+                <div class="stage-node n5">📊</div>
+                <div class="stage-connector"></div>
+                <div class="stage-label">ResultFormatter</div>
+                <div class="stage-detail">
+                    <h4>ResultFormatter</h4>
+                    <p>APA7-compliant table builder with effect sizes (η², Cohen's d, R²). Formats p-values per APA convention (&lt; .001 or exact to three decimals).</p>
+                </div>
+            </div>
+            <!-- Stage 6 -->
+            <div class="pipeline-stage">
+                <div class="stage-node n6">📄</div>
+                <div class="stage-label">ReportBuilder</div>
+                <div class="stage-detail">
+                    <h4>ReportBuilder</h4>
+                    <p>Jinja2 template orchestrator generating PDF, DOCX, or HTML output. Supports pluggable journal templates (APA7, Vancouver, IEEE, Nature).</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
+<!-- ━━━━━━━━━━ §3 CAPABILITIES ━━━━━━━━━━ -->
+<section id="capabilities">
+    <div class="container">
+        <div class="text-center">
+            <span class="section-label">Core Capabilities</span>
+            <h2>Built for Rigorous Research</h2>
+        </div>
+        <p class="section-desc">Every feature maps directly to the implemented Python codebase. No aspirational claims.</p>
+
+        <div class="cap-grid">
+            <!-- Card 1 -->
+            <div class="cap-card">
+                <div class="cap-icon i1">🛡️</div>
+                <h3>Interactive CLI Validation</h3>
+                <p>The <code>statforge validate</code> command performs preliminary data quality checks: flagging missing values, detecting data type anomalies, and screening for outliers via IQR methods — entirely decoupled from the statistical models.</p>
+            </div>
+            <!-- Card 2 -->
+            <div class="cap-card">
+                <div class="cap-icon i2">🎯</div>
+                <h3>PriorAdvisor</h3>
+                <p>Auto-suggests data-driven weakly informative priors (Normal with μ = observed mean, σ = 2× observed SD). Documents the rationale for peer review. Runs automated sensitivity analysis across uninformative, weakly informative, and informative prior variants.</p>
+            </div>
+            <!-- Card 3 -->
+            <div class="cap-card">
+                <div class="cap-icon i3">📝</div>
+                <h3>Automated Methods Section</h3>
+                <p>The <code>MethodsBuilder</code> synthesizes journal-ready prose specifying the exact test name, StatForge version, assumption rationale, significance threshold (α), and effect size metric with interpretation scale (per Cohen, 1988).</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ━━━━━━━━━━ §4 SERVICES ━━━━━━━━━━ -->
+<section id="services">
+    <div class="container">
+        <div class="text-center">
+            <span class="section-label">Deployment</span>
+            <h2>Deployment &amp; Analysis Services</h2>
+        </div>
+        <p class="section-desc">StatForge is free and open-source. Professional services are available for institutions requiring bespoke configurations.</p>
+
+        <div class="svc-grid">
+            <!-- Open Source -->
+            <div class="svc-card">
+                <div class="svc-tier">Open Source</div>
+                <div class="svc-price">Free</div>
+                <ul class="svc-features">
+                    <li>Full CLI pipeline execution</li>
+                    <li>Frequentist &amp; Bayesian model suite</li>
+                    <li>APA/Standardized report generation</li>
+                    <li>Plugin registry for custom models</li>
+                    <li>Community support via GitHub</li>
+                </ul>
+                <a href="https://github.com/samvardhan03/statforge" class="btn btn-secondary" style="width:100%;justify-content:center;">Install via pip</a>
+            </div>
             <!-- Custom Solutions -->
-            <div class="pricing-card featured">
-                <div class="featured-badge">PROFESSIONAL</div>
-                <div class="pricing-tier">Custom Solutions</div>
-                <div class="pricing-price">Custom Quote</div>
-                <ul class="pricing-features">
-                    <li>Bespoke PyMC Model Development</li>
-                    <li>Institutional/Lab Deployment & Training</li>
-                    <li>Custom Journal Templates</li>
-                    <li>Priority Engineering Support</li>
+            <div class="svc-card featured">
+                <div class="svc-badge">Professional</div>
+                <div class="svc-tier">Custom Solutions</div>
+                <div class="svc-price">Custom Quote</div>
+                <ul class="svc-features">
+                    <li>Bespoke PyMC model development</li>
+                    <li>Institutional / lab deployment</li>
+                    <li>Custom Jinja2 journal templates</li>
+                    <li>Onboarding &amp; training sessions</li>
+                    <li>Priority engineering support</li>
                 </ul>
-                <a href="mailto:support@example.com" class="cta-button primary">Contact for Details</a>
+                <a href="mailto:samvardhanshekhawat1@gmail.com" class="btn btn-primary" style="width:100%;justify-content:center;">Contact for Details</a>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-</div>
-
+<!-- ━━━━━━━━━━ §5 FOOTER ━━━━━━━━━━ -->
 <footer>
-    <p>&copy; 2026 StatForge Authors. Open Source Software.</p>
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-brand">StatForge</div>
+                <p class="footer-brand-desc">An open-source Python library and CLI for automated statistical analysis and publication-ready report generation. MIT License.</p>
+            </div>
+            <div>
+                <h4>Documentation</h4>
+                <ul>
+                    <li><a href="https://samvardhan03.github.io/statforge/getting-started/">Getting Started</a></li>
+                    <li><a href="https://samvardhan03.github.io/statforge/cli/">CLI Reference</a></li>
+                    <li><a href="https://samvardhan03.github.io/statforge/contributing/">Contributing</a></li>
+                    <li><a href="https://samvardhan03.github.io/statforge/services/">Services</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Community</h4>
+                <ul>
+                    <li><a href="https://github.com/samvardhan03/statforge" target="_blank">GitHub Repository</a></li>
+                    <li><a href="https://github.com/samvardhan03/statforge/blob/main/CONTRIBUTING.md" target="_blank">CONTRIBUTING.md</a></li>
+                    <li><a href="https://github.com/samvardhan03/statforge/issues" target="_blank">Issue Tracker</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div style="margin-bottom:2rem;">
+            <h4>Cite StatForge</h4>
+            <p style="font-size:0.82rem;color:var(--slate-5);margin-bottom:0.5rem;">JOSS submission in preparation. DOI pending.</p>
+            <div class="cite-block">@article{statforge2026,<br>&nbsp;&nbsp;title  = {StatForge: Automated Statistical Reporting},<br>&nbsp;&nbsp;author = {StatForge Authors},<br>&nbsp;&nbsp;year   = {2026},<br>&nbsp;&nbsp;note   = {JOSS submission in preparation}<br>}</div>
+        </div>
+
+        <div class="footer-bar">
+            <span>© 2026 StatForge Authors. MIT License.</span>
+            <span>Python ≥ 3.10 · PyMC ≥ 5.0 · pandas · scipy · Jinja2</span>
+        </div>
+    </div>
 </footer>
+
+<!-- ── Terminal Typing Animation ── -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const lines = document.querySelectorAll('.type-line');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    lines.forEach(line => {
+                        const delay = parseInt(line.dataset.delay) || 0;
+                        setTimeout(() => line.classList.add('visible'), delay);
+                    });
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.3 });
+        observer.observe(document.getElementById('termBody'));
+    });
+</script>
 
 </body>
 </html>
