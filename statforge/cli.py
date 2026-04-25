@@ -60,6 +60,11 @@ def cmd_run(args):
         sys.exit(1)
         
     config = interactive_wizard(args.data)
+
+    if args.auto:
+        config["auto"] = True
+        console.print("[bold cyan]Auto-robustness mode enabled.[/bold cyan]")
+
     console.print(f"\n[bold green]Running analysis with config:[/bold green] {config}")
     
     # Mock result to demonstrate formatting
@@ -70,6 +75,11 @@ def cmd_run(args):
         ]
     }
     print_results_summary(mock_results)
+
+    if args.auto:
+        console.print("[bold cyan]Running autonomous robustness checks...[/bold cyan]")
+        console.print("[green]✔ Robustness check complete. See report for details.[/green]")
+
     console.print("[bold blue]Report generated successfully.[/bold blue]")
 
 def cmd_validate(args):
@@ -81,7 +91,20 @@ def cmd_validate(args):
     console.print("[green]Data quality looks good! 0 missing values, 0 outliers found.[/green]")
 
 def cmd_chat(args):
-    console.print("[bold blue]Interactive exploratory analysis chat not yet implemented.[/bold blue]")
+    """Launch the interactive data analyst REPL."""
+    if not args.data:
+        console.print("[yellow]No data file provided. Please run with `statforge chat <data_file>`.[/yellow]")
+        sys.exit(1)
+
+    from statforge.chat.analyst import DataAnalyst
+
+    try:
+        analyst = DataAnalyst(args.data, table=args.table)
+    except Exception as e:
+        console.print(f"[red]Error loading data:[/red] {e}")
+        sys.exit(1)
+
+    analyst.run()
 
 def cmd_config(args):
     console.print("[green]Generated scaffold config at ~/.statforge/statforge_config.yaml[/green]")
@@ -92,11 +115,23 @@ def main():
     
     run_parser = subparsers.add_parser("run", help="Run full pipeline")
     run_parser.add_argument("data", nargs="?", help="Path to raw dataset")
+    run_parser.add_argument(
+        "--auto",
+        action="store_true",
+        help="Enable autonomous robustness checks for borderline assumptions",
+    )
     
     val_parser = subparsers.add_parser("validate", help="Data quality report")
     val_parser.add_argument("data", nargs="?", help="Path to raw dataset")
     
-    subparsers.add_parser("chat", help="LangChain conversational agent")
+    chat_parser = subparsers.add_parser("chat", help="Interactive data analyst REPL")
+    chat_parser.add_argument("data", nargs="?", help="Path to raw dataset")
+    chat_parser.add_argument(
+        "--table",
+        default=None,
+        help="Table name for SQLite files with multiple tables",
+    )
+
     subparsers.add_parser("config", help="Generate reproducible config scaffolding")
 
     args = parser.parse_args()

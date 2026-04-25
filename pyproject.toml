@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "statforge"
-version = "0.1.0"
+version = "0.2.0"
 description = "Automated Bayesian-frequentist statistics and publication-ready reports"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -19,11 +19,12 @@ keywords = [
 classifiers = [
     "Topic :: Scientific/Engineering :: Information Analysis",
     "Intended Audience :: Science/Research",
-    "Programming Language :: Python :: 3.10"
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
     "pandas",
-    "pyreadstat",
     "numpy",
     "scipy",
     "statsmodels",
@@ -40,6 +41,19 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+full = [
+    "pyarrow",
+    "pyreadstat",
+    "openpyxl",
+    "tables",
+    "requests",
+    "anthropic",
+]
+excel = ["openpyxl"]
+parquet = ["pyarrow"]
+spss = ["pyreadstat"]
+hdf = ["tables"]
+chat = ["anthropic"]
 dev = [
     "pytest",
     "hypothesis",

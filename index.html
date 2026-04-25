@@ -500,7 +500,7 @@
 <!-- ── Navbar ── -->
 <nav>
     <div class="container">
-        <a href="#" class="nav-brand">StatForge <span>v0.1.0</span></a>
+        <a href="#" class="nav-brand">StatForge <span>v0.2.0</span></a>
         <ul class="nav-links">
             <li><a href="#pipeline">Pipeline</a></li>
             <li><a href="#capabilities">Capabilities</a></li>
@@ -516,11 +516,17 @@
     <div class="container">
         <div class="hero-grid">
             <div class="hero-text">
+                <div style="display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap;">
+                    <a href="https://pypi.org/project/statforge/" target="_blank"><img src="https://img.shields.io/pypi/v/statforge" alt="PyPI version"></a>
+                    <a href="https://pypi.org/project/statforge/" target="_blank"><img src="https://img.shields.io/pypi/dm/statforge" alt="PyPI downloads"></a>
+                    <img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="License">
+                </div>
                 <h1>Automated Bayesian-frequentist statistics and publication-ready reports</h1>
-                <p class="subheadline">From raw data to APA-formatted PDF, DOCX, and HTML without deep programming expertise.</p>
+                <p class="subheadline">From raw data to APA-formatted PDF, DOCX, and HTML — now with 15+ data formats, AI-powered chat, and autonomous robustness checks.</p>
                 <div class="hero-ctas">
-                    <a href="https://samvardhan03.github.io/statforge/" class="btn btn-primary">Read the Docs</a>
-                    <a href="#services" class="btn btn-secondary">View Professional Services</a>
+                    <a href="https://pypi.org/project/statforge/" target="_blank" class="btn btn-primary">Install from PyPI</a>
+                    <a href="https://samvardhan03.github.io/statforge/" class="btn btn-secondary">Read the Docs</a>
+                    <a href="https://github.com/samvardhan03/statforge" target="_blank" class="btn btn-secondary">GitHub</a>
                 </div>
             </div>
             <div class="terminal" role="img" aria-label="Terminal demo of StatForge CLI">
@@ -532,13 +538,13 @@
                 </div>
                 <div class="terminal-body" id="termBody">
                     <div class="type-line" data-delay="300">
-                        <span class="prompt">$ </span><span class="cmd">pip install statforge</span>
+                        <span class="prompt">$ </span><span class="cmd">pip install statforge[full]</span>
                     </div>
                     <div class="type-line" data-delay="900">
-                        <span class="dim">Collecting statforge...</span>
+                        <span class="dim">Collecting statforge[full]...</span>
                     </div>
                     <div class="type-line" data-delay="1500">
-                        <span class="success">✔ Successfully installed statforge-0.1.0</span>
+                        <span class="success">✔ Successfully installed statforge-0.2.0</span>
                     </div>
                     <div class="type-line" data-delay="2400">&nbsp;</div>
                     <div class="type-line" data-delay="2700">
@@ -590,7 +596,7 @@
                 <div class="stage-label">DataLoader</div>
                 <div class="stage-detail">
                     <h4>DataLoader</h4>
-                    <p>CSV, Excel (<code>.xlsx</code>), SPSS (<code>.sav</code>), and Parquet ingestion via <code>pandas</code> + <code>pyreadstat</code>. Automatic format detection by file extension.</p>
+                    <p>15+ formats: CSV, TSV, JSON, Excel, Parquet, Feather, SPSS, Stata, SAS, HDF5, SQLite, and remote URLs. Automatic format detection with lazy dependency loading.</p>
                 </div>
             </div>
             <!-- Stage 2 -->
@@ -641,6 +647,35 @@
                     <h4>ReportBuilder</h4>
                     <p>Jinja2 template orchestrator generating PDF, DOCX, or HTML output. Supports pluggable journal templates (APA7, Vancouver, IEEE, Nature).</p>
                 </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ━━━━━━━━━━ §2.5 WHAT'S NEW ━━━━━━━━━━ -->
+<section id="whats-new" style="background:var(--white);">
+    <div class="container">
+        <div class="text-center">
+            <span class="section-label">What's New</span>
+            <h2>v0.2.0 — Major Update</h2>
+        </div>
+        <p class="section-desc">Three headline features expand StatForge from a pipeline runner into a full research companion.</p>
+
+        <div class="cap-grid">
+            <div class="cap-card">
+                <div class="cap-icon" style="background:#dbeafe;color:#2563eb;">📂</div>
+                <h3>15+ Data Formats</h3>
+                <p>Load CSV, TSV, JSON, Excel, Parquet, Feather, SPSS, Stata, SAS, HDF5, SQLite databases, and remote URLs. Optional dependencies are imported lazily with clear install hints.</p>
+            </div>
+            <div class="cap-card">
+                <div class="cap-icon" style="background:#fce7f3;color:#db2777;">💬</div>
+                <h3>AI Data Analyst Chat</h3>
+                <p>Run <code>statforge chat data.csv</code> to explore your dataset interactively. Each row becomes a searchable document (microgpt philosophy). Connects to Claude API or uses a built-in rule engine.</p>
+            </div>
+            <div class="cap-card">
+                <div class="cap-icon" style="background:#d1fae5;color:#059669;">🔄</div>
+                <h3>Autonomous Robustness</h3>
+                <p>Pass <code>--auto</code> to the run command. When borderline assumptions are detected (0.04 &lt; p &lt; 0.06), both parametric and non-parametric tests run automatically and results are compared.</p>
             </div>
         </div>
     </div>
